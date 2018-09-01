@@ -82,6 +82,12 @@ $app->singleton(
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
+// CORS
+$app->register(Barryvdh\Cors\ServiceProvider::class);
+$app->configure('cors');
+
+// JWTs
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
