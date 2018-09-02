@@ -16,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-//        // admin can do all
+        // admin can do all
         Gate::before(function ($user) {
             if ($user && $user->hasRole(Role::fromName('admin')->uid)) {
                 return true;

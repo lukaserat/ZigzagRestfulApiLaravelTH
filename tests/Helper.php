@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Hash;
+
 trait Helper
 {
     /**
@@ -34,7 +36,7 @@ trait Helper
     public function createAdmin() {
         /** @var App\User $user */
         $user = factory(App\User::class)->create([
-            'password' => 'password',
+            'password' => Hash::make('password'),
         ]);
         $user->assignRole(App\Role::fromName('admin')->uid);
         return $user;

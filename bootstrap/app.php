@@ -73,6 +73,7 @@ $app->singleton(
      'role' => App\Http\Middleware\RequiredRole::class,
      'apiversion' => App\Http\Middleware\ApiVersion::class,
      'auth' => App\Http\Middleware\Authenticate::class,
+     'throttle' => App\Http\Middleware\ThrottleRequests::class,
  ]);
 
 /*

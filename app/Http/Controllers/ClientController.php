@@ -22,7 +22,7 @@ class ClientController extends Controller
      */
     public function __construct(User $client)
     {
-        $this->middleware('auth', ['except' => 'store']);
+        $this->middleware('auth:api', ['except' => 'store']);
         $this->client = $client;
     }
 

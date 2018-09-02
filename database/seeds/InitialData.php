@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Webpatser\Uuid\Uuid;
 
 class InitialData extends Seeder
@@ -69,7 +70,7 @@ class InitialData extends Seeder
         /** @var App\User $root */
         $root = factory(App\User::class)->create([
             'username' => 'root',
-            'password' => 'root',
+            'password' => Hash::make('root'),
         ]);
         $root->assignRole(App\Role::fromName('admin')->uid);
     }

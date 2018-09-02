@@ -127,12 +127,39 @@ class FeatureTest extends TestCase
     }
 
     /** @test */
-    public function non_admin_should_no_be_able_to_create_user() {
+    public function non_admin_should_not_be_able_to_create_user() {
         // non admin
         $user = $this->createNonAdmin();
         $this->actingAs($user);
 
         $data = factory(App\User::class)->raw();
+        $this->json('POST', 'api/users', $data, $this->headers());
+        $this->assertResponseStatus(401);
+    }
+
+    /** @test */
+    public function admin_should_be_able_create_admin_user() {
+        // admin
+        $user = $this->createAdmin();
+        $this->actingAs($user);
+
+        $data = factory(App\User::class)->raw();
+        $data['is_admin'] = true;
+        $this->json('POST', 'api/users', $data, $this->headers());
+        $this->assertResponseStatus(201);
+        $this->seeInDatabase(with(new App\User)->getTable(), [
+            'username' => $data['username'],
+        ]);
+        /** @var App\User $created */
+        $created = App\User::whereUsername($data['username'])->first();
+        $this->assertTrue($created->hasRole(App\Role::fromName('admin')->uid));
+
+        // client, should not be able to create admin user
+        $client = $this->createClient(true);
+        $this->actingAs($client);
+
+        $data = factory(App\User::class)->raw();
+        $data['is_admin'] = true;
         $this->json('POST', 'api/users', $data, $this->headers());
         $this->assertResponseStatus(401);
     }

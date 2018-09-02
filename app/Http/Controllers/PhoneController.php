@@ -24,7 +24,7 @@ class PhoneController extends Controller
      */
     public function __construct(Phone $phone, User $user)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->phone = $phone;
         $this->user = $user;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Role;
 use App\User;
 use App\Exceptions\ApiException;
 use App\Http\Resource\Collection;
@@ -22,7 +23,7 @@ class UserController extends Controller
      */
     public function __construct(User $user)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->user = $user;
     }
 
