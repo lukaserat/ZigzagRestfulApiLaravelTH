@@ -18,4 +18,46 @@ $router->group([
 ], function () use($router) {
 
     // define api routes
+    $router->group([
+        'prefix' => 'api'
+    ], function () use($router) {
+
+        // resource for user
+        $router->group([
+            'prefix' => 'users', // /api/users
+        ], function () use($router) {
+            $router->get('/', 'UserController@index');
+            $router->get('/{user}', 'UserController@show');
+            $router->post('/', 'UserController@store');
+            $router->put('/{user}', 'UserController@update');
+            $router->delete('/{user}', 'UserController@destroy');
+        });
+
+        // resource for client
+        $router->group([
+            'prefix' => 'clients' // /api/clients
+        ], function () use($router) {
+            $router->get('/', 'ClientController@index');
+            $router->get('/{client}', 'ClientController@show');
+            $router->post('/', 'ClientController@store');
+            $router->put('/{client}', 'ClientController@update');
+            $router->delete('/{client}', 'ClientController@destroy');
+            $router->put('/{client}/authorize', 'ClientController@authorizeClient');
+            $router->put('/{client}/de-authorize', 'ClientController@deAuthorizeClient');
+        });
+
+        // resource for phone
+        $router->group([
+            'prefix' => 'phones' // /api/phones
+        ], function () use($router) {
+            $router->get('/{owner}/', 'PhoneController@index');
+            $router->get('/{owner}/{phone}', 'PhoneController@show');
+            $router->post('/{owner}/', 'PhoneController@store');
+            $router->put('/{owner}/{phone}', 'PhoneController@update');
+            $router->delete('/{owner}/{phone}', 'PhoneController@destroy');
+        });
+    });
+
 });
+
+
