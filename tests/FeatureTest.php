@@ -402,4 +402,85 @@ class FeatureTest extends TestCase
         $clientToUpdate->refresh();
         $this->assertFalse($clientToUpdate->isAuthorized());
     }
+
+    /** @test */
+    public function should_be_able_to_login()
+    {
+        // Get the test user
+        $this->json('POST', '/api/clients', [
+            'username' => 'newClient',
+            'password' => 'newClient',
+        ], $this->headers());
+
+        // Login without those those details
+        $this->json('POST', '/api/login', [
+            'username' => 'newClient',
+            'password' => 'newClient',
+        ], $this->headers());
+
+        $this->assertResponseOk();
+        $this->assertContains('Bearer', $this->response->headers->get('Authorization'));
+
+        $result = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('user', $result);
+        $this->assertObjectHasAttribute('jwt', $result);
+    }
+
+    /** @test */
+    public function should_be_able_to_logout()
+    {
+        // Get the test user
+        $this->json('POST', '/api/clients', [
+            'username' => 'newClient',
+            'password' => 'newClient',
+        ], $this->headers());
+
+        // Login without those those details
+        $this->json('POST', '/api/login', [
+            'username' => 'newClient',
+            'password' => 'newClient',
+        ], $this->headers());
+
+        $this->assertResponseOk();
+        $this->assertContains('Bearer', $this->response->headers->get('Authorization'));
+
+        $result = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('user', $result);
+        $this->assertObjectHasAttribute('jwt', $result);
+
+        $token = $result->jwt;
+        $headers = $this->headers();
+        $headers['Authorization'] = sprintf('Bearer %s', $token);
+        $this->json('POST', '/api/logout', [], $headers);
+        $this->assertResponseOk();
+        $result = json_decode($this->response->getContent());
+        $this->assertContains('Successfully logged out', $result->message);
+    }
+
+    /** @test */
+    public function should_be_able_to_access_endpoint_with_auth_api_middleware()
+    {
+        $this->json('POST', '/api/login', [
+            'username' => 'root',
+            'password' => 'root',
+        ], $this->headers());
+        $this->assertResponseOk();
+        $this->assertContains('Bearer', $this->response->headers->get('Authorization'));
+        $result = json_decode($this->response->getContent());
+        $token = $result->jwt;
+
+        $headers = $this->headers();
+        $headers['Authorization'] = sprintf('Bearer %s', $token);
+
+        $this->json('GET', '/api/clients', [], $headers);
+        $this->assertResponseOk();
+
+        $headers['Authorization'] = sprintf('Bearer %s', $token);
+        $this->json('POST', '/api/logout', [], $headers);
+        $this->assertResponseOk();
+
+        $headers = $this->headers();
+        $this->get('/api/clients', $headers);
+        $this->assertResponseStatus(401);
+    }
 }

@@ -60,6 +60,11 @@ class AuthServiceProvider extends ServiceProvider
             return ($user->isAuthorized() && $user->isClient());
         });
 
+        Gate::define('create-admin-user', function ($user) {
+            // creating user as admin is only admin type user
+            return false;
+        });
+
         Gate::define('update-user', function ($user, $instance) {
             // only the owner of the info and the admin
             return $user->id === $instance->id;

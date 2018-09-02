@@ -22,6 +22,11 @@ $router->group([
         'prefix' => 'api'
     ], function () use($router) {
 
+        $router->group(['middleware' => 'throttle:10,1'], function () use ($router) {
+            $router->post('/login', 'AuthController@postLogin');
+            $router->post('/logout', 'AuthController@logout');
+        });
+
         // resource for user
         $router->group([
             'prefix' => 'users', // /api/users

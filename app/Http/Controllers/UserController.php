@@ -59,6 +59,10 @@ class UserController extends Controller
             throw new ApiException('Not allowed to perform the action.', 401);
         }
 
+        if ($request->has('is_admin') && !Gate::allows('create-admin-user')) {
+            throw new ApiException('Not allowed to perform the action.', 401);
+        }
+
         $this->validate($request, [
             'username' => 'required|unique:users',
             'password' => 'required',
@@ -68,9 +72,14 @@ class UserController extends Controller
 
         /** @var User $instance */
         $instance = $this->user->newInstance($data);
+
         // hash the password
         $instance->password = Hash::make($request->password);
         $instance->save();
+
+        if ($request->has('is_admin') && $request->is_admin) {
+            $instance->assignRole(Role::fromName('admin')->uid);
+        }
 
         return new Item($instance);
     }
