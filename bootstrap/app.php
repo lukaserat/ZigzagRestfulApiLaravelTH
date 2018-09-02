@@ -63,9 +63,17 @@ $app->singleton(
 //    App\Http\Middleware\ExampleMiddleware::class
 // ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+ $app->routeMiddleware([
+     'nocache' => App\Http\Middleware\NoCache::class,
+     'hideserver' => App\Http\Middleware\ServerHeader::class,
+     'ensurejson' => App\Http\Middleware\EnsureJson::class,
+     'security' => App\Http\Middleware\SecurityHeaders::class,
+     'csp' => App\Http\Middleware\ContentSecurityPolicyHeaders::class,
+     'cors' => \Barryvdh\Cors\HandleCors::class,
+     'role' => App\Http\Middleware\RequiredRole::class,
+     'apiversion' => App\Http\Middleware\ApiVersion::class,
+     'auth' => App\Http\Middleware\Authenticate::class,
+ ]);
 
 /*
 |--------------------------------------------------------------------------

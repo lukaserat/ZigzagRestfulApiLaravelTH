@@ -28,8 +28,9 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $exception
+     * @param  \Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -45,6 +46,28 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        $default = parent::render($request, $exception);
+
+        $error = [
+            'code' => $default->getStatusCode(),
+            'message' => $exception->getMessage(),
+        ];
+        $apiRelated = ($exception instanceof ApiException);
+
+        if ($apiRelated) {
+            $error['code'] = $exception->getCode();
+            if ($error['code'] === 404) {
+                $error['message'] = 'Not Found';
+            }
+        } else {
+            if (env('APP_DEBUG')) {
+                return $default;
+            }
+        }
+
+        // return json response
+        return response()->json([
+            'error' => $error,
+        ], $error['code']);
     }
 }

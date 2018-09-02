@@ -11,6 +11,11 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+/** @var \Laravel\Lumen\Routing\Router $router */
+$router->group([
+    'prefix' => '',
+    'middleware' => ['nocache', 'hideserver', 'security', 'csp', 'cors', 'ensurejson', 'apiversion']
+], function () use($router) {
+
+    // define api routes
 });
