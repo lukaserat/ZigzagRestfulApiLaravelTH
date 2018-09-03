@@ -142,7 +142,7 @@ class User extends Model implements
      */
     public function getJWTIdentifier()
     {
-        return 'username';
+        return $this->getKey();
     }
 
     /**
@@ -162,7 +162,7 @@ class User extends Model implements
      */
     public function getAuthIdentifierName()
     {
-        return 'username';
+        return 'id';
     }
 
     /**
@@ -172,7 +172,7 @@ class User extends Model implements
      */
     public function getAuthIdentifier()
     {
-        return $this->username;
+        return $this->id;
     }
 
     /**
